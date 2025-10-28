@@ -1,0 +1,9 @@
+.myheader {
+  background: url("../images/ComfyUI_00026_.png");
+  background-repeat: no-repeat; 
+  background-size: cover;
+}
+
+.md-header {
+  background-color: transparent !important
+}
