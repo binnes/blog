@@ -1,4 +1,4 @@
-site_name: Brian Innes - Presonal Blog
+site_name: Brian Innes - Personal Blog
 site_author: Brian Innes
 site_url: http://localhost:8000
 repo_url: https://github.com/binnes/blog
@@ -49,11 +49,20 @@ plugins:
         title: Brian Innes
 extra_css:
   - assets/stylesheets/extra.css
+extra_javascript:
+  - assets/javascripts/mermaid.mjs
 extra:
   social:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/briani
-
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
   - Home: index.md
   - Blog:

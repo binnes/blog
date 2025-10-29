@@ -11,7 +11,15 @@
 	//	"ghcr.io/devcontainers/features/node:1": {},
 	//	"ghcr.io/devcontainers/features/python:1": {},
 	//	"ghcr.io/devcontainers-contrib/features/poetry:2": {}
-	//}
+	//},
+
+	"customizations":{
+		"vscode": {
+			"extensions": [
+				"bierner.markdown-mermaid"
+			]
+		}
+	},
 
 	// 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8000],
