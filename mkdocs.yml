@@ -2,6 +2,7 @@ site_name: Brian Innes - Personal Blog
 site_author: Brian Innes
 site_url: https://binnes.github.io/blog/
 repo_url: https://github.com/binnes/blog
+copyright: Copyright &copy; 2025 Brian Innes
 
 theme:
   name: material
