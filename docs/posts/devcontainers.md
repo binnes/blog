@@ -43,7 +43,7 @@ Devcontainers is a technology that allows a custom environment to be created bas
 
 When VS Code (or another client) sees a .devcontainer/ folder it reads devcontainer.json, builds the referenced Docker image, runs any defined scripts, and finally mounts your source code into the resulting container. The workflow looks like this:
 
-```Mermaid
+```mermaid
 ---
 title: Devcontainers
 config:

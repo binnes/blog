@@ -64,6 +64,14 @@ extra:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/briani
 markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
   - admonition
   - pymdownx.details
   - pymdownx.superfences:
