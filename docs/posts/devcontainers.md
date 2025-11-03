@@ -108,7 +108,7 @@ Container Image ("image": "node:20" in devcontainer.json)	| VS Code pulls a pr
 !!!Note 
     In a compose scenario only one service can be designated as the development container (the one that receives the devcontainer.json configuration). The rest are treated as background services.
 
-# Features
+## Features
 
 Features are reusable, community‑maintained scripts that extend a devcontainer without you having to write low‑level install steps. They live in the Dev Container Feature Registry (ghcr.io/devcontainers/features) or can be pulled directly from giuthub and can be referenced directly in devcontainer.json:
 
