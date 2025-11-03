@@ -12,3 +12,16 @@
 .md-header {
   background-color: transparent !important
 }
+
+.md-header__button.md-logo img {
+  border-radius: 33%;
+}
+
+.md-nav__title {
+  background: url("../images/ComfyUI_00026_.png");
+  background-repeat: no-repeat; 
+  background-size: cover;
+}
+.md-nav__button.md-logo img {
+  border-radius: 33%;
+}
