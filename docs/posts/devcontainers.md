@@ -41,7 +41,7 @@ In short, devcontainers let you treat the entire development stack as code.
 
 Devcontainers is a technology that allows a custom environment to be created based on container technology.
 
-When VS Code (or another client) sees a .devcontainer/ folder it reads devcontainer.json, builds the referenced Docker image, runs any defined scripts, and finally mounts your source code into the resulting container. The workflow looks like this:
+When VS Code (or another client) sees a .devcontainer/ folder it reads devcontainer.json, builds or pulls the referenced Container image(s), runs any defined scripts, and finally mounts your source code into the resulting container. The workflow looks like this:
 
 ```mermaid
 ---
@@ -110,7 +110,7 @@ Container Image ("image": "node:20" in devcontainer.json)	| VS Code pulls a pr
 
 ## Features
 
-Features are reusable, community‑maintained scripts that extend a devcontainer without you having to write low‑level install steps. They live in the Dev Container Feature Registry (ghcr.io/devcontainers/features) or can be pulled directly from giuthub and can be referenced directly in devcontainer.json:
+Features are reusable, community‑maintained scripts that extend a devcontainer without you having to write low‑level install steps. They live in the [Dev Container Feature Registry](https://containers.dev/features), can be pulled directly from the web or loaded locally and can be referenced directly in devcontainer.json:
 
 ```JSON
 {
@@ -139,10 +139,13 @@ Beyond features, devcontainers let you hook into the lifecycle at several points
 
 | Lifecycle hook	| Where to define it |	When it runs |
 |-----------------|--------------------|---------------|
-| preCreateCommand (or init.sh) |	In devcontainer.json ("preCreateCommand": "./.devcontainer/init.sh" ) or as a script referenced by "initializeCommand" in newer specs. |	Executed before the Docker image is built. Useful for generating files that affect the build (e.g., writing a .npmrc). |
-| Feature install	| Declared under "features"; run automatically during image build after the base Containerfile steps.	| During docker build – before the container starts. |
-| postCreateCommand (setup.sh) |	In devcontainer.json ("postCreateCommand": "./.devcontainer/setup.sh" )	| Runs inside the running container after it has started but before VS Code attaches. Ideal for installing npm packages, creating virtual environments, or seeding a database. |
-| onStartCommand (start.sh)	 | "onStartCommand": "npm start" (or any shell command)	| Executed each time the container is re‑started (e.g., after you stop and reopen). Good for launching long‑running processes like a local server or watch task. |
+| initializeCommand |	In devcontainer.json ("initializeCommand": "./.devcontainer/init.sh" ) |	Executed before the Docker image is built. Useful for generating files that affect the build (e.g., writing a .npmrc). |
+| Feature install	| Declared under "features"; run automatically during image build after the base Containerfile steps.	| During container build – before the container starts. |
+| onCreateCommand | In devcontainer.json ("onCreateCommand": "./devcontainer/setup.sh" ) | This command is run inside a container immediately after it has started for the first time. |
+| updateContentCommand | In devcontaner.json ("updateContentCommand": "./devcontainer/update.sh" ) | This command runs after **onCreateCommand** It executes inside the comtainer whenever new content is available in the source tree during the creation process, but will execute at least once. |
+| postCreateCommand (setup.sh) |	In devcontainer.json ("postCreateCommand": "./.devcontainer/setup.sh" )	| Runs inside the running container after it has started and been assigned to a user for the first time, but before VS Code attaches. Ideal for installing npm packages, creating virtual environments, or seeding a database. |
+| postStartCommand	 | In devcontainer.json ("postStartCommand": "npm start")	| Executed each time the container is re‑started (e.g., after you stop and reopen). Good for launching long‑running processes like a local server or watch task. |
+| postAttachCommand | In devcontainer.json ("postAttachCommand": "./.devcontainer/attach.sh" ) | Runs each time a tool has successfully arrached to the container |  
 | VS Code extensions	| "extensions": ["ms-python.python", "dbaeumer.vscode-eslint"] in devcontainer.json	| VS Code installs the listed extensions automatically when it connects to the container. |
 
 Example: Adding a custom script
@@ -203,30 +206,30 @@ Putting everything together, here’s a step‑by‑step guide to adopt devconta
 
 2. Add a Containerfile (or pick an image) that contains the OS you want. A minimal example for Node + Python:
 
-```Containerfile
-# .devcontainer/Containerfile
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.0
+    ```Containerfile
+    # .devcontainer/Containerfile
+    FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.0
 
-# Install any global system packages you need
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends git curl
-```
+    # Install any global system packages you need
+    RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+        && apt-get install -y --no-install-recommends git curl
+    ```
 
 3. Write devcontainer.json referencing the Containerfile and desired features/extensions (see previous section for a full example).
 
 4. Open the folder in VS Code. You’ll see a prompt:
 
-!!!Info
-    “Folder contains a Dev Container configuration – Reopen in Container?”
+    !!!Info "VSCode prompt"
+        “Folder contains a Dev Container configuration – Reopen in Container?”
 
-Click it, or run the command Remote-Containers: Open Folder in Container.
+    Click it, or run the command Remote-Containers: Open Folder in Container.
 
 5. VS Code will now:
 
-- Build the image (caching layers where possible).
-- Run any preCreateCommand / feature install scripts.
-- Start the container and execute postCreateCommand.
-- Attach the editor, installing listed extensions automatically.
+    - Build the image (caching layers where possible).
+    - Run any preCreateCommand / feature install scripts.
+    - Start the container and execute postCreateCommand.
+    - Attach the editor, installing listed extensions automatically.
 
 6. Start coding! Your terminal (`Ctrl+``) is already inside the container, your ports are forwarded, and you can run debuggers as if they were local.
 
