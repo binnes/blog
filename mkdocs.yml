@@ -1,6 +1,6 @@
 site_name: Brian Innes - Personal Blog
 site_author: Brian Innes
-site_url: http://localhost:8000
+site_url: https://binnes.github.io/blog/
 repo_url: https://github.com/binnes/blog
 
 theme:
@@ -33,7 +33,8 @@ theme:
   features:
     - navigation.indexes
     - navigation.footer
-
+    - navigation.tabs
+    - content.code.annotate
 plugins:
   - search
   - blog:

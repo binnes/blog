@@ -1,6 +1,6 @@
-# Do not use with Docker builds, only for local dev with mkdocs CLI
+# Do not use with podman builds, only for local dev with mkdocs CLI
 mkdocs==1.6.1
-mkdocs-material[all]==9.6.22
+mkdocs-material[all]==9.6.23
 mkdocs-minify-html-plugin==0.3.9
 mkdocs-mermaid2-plugin==1.2.3
 mkdocs-redirects==1.2.2
