@@ -31,7 +31,7 @@ The definition lives in a small JSON/YAML file (devcontainer.json) together with
 
 ## Why use them?
 
-- Consistency: Every teammate (or CI job) gets exactly the same tools, libraries, and OS‑level dependencies. No more “it works on my machine”.
+- Consistency: Every teammate (or CI job - automated build job for a Continuous Integration pipeline) gets exactly the same tools, libraries, and OS‑level dependencies. No more “it works on my machine”.
 - Isolation: Your host stays clean—no global npm/pip/ruby installations that could clash with other projects.
 - Portability: The same definition can be used locally (VS Code Remote – Containers), in the cloud (GitHub Codespaces, Gitpod) or on any CI platform that supports Containers.
 - Speed of onboarding: New contributors just open the repo and click “Reopen in Container”. All tooling is ready within seconds.
@@ -41,7 +41,7 @@ In short, devcontainers let you treat the entire development stack as code.
 
 Devcontainers is a technology that allows a custom environment to be created based on container technology.
 
-When VS Code (or another client) sees a .devcontainer/ folder it reads devcontainer.json, builds or pulls the referenced Container image(s), runs any defined scripts, and finally mounts your source code into the resulting container. The workflow looks like this:
+When VS Code (or another IDE or client) sees a .devcontainer/ folder it reads devcontainer.json, builds or pulls the referenced Container image(s), runs any defined scripts, and finally mounts your source code into the resulting container. The workflow looks like this:
 
 ```mermaid
 ---
@@ -121,6 +121,8 @@ Features are reusable, community‑maintained scripts that extend a devcontainer
 }
 ```
 
+Features can provide support for programming languages such as JavaScript, Java or Python, a capability such as running containers within a container or tool such as Skopeo which allows images to be copied between registries.
+
 When the container is built, each feature runs its own install script (usually a Bash snippet) that adds the requested toolset and optionally sets up environment variables.
 
 ### Issues with different OS distributions
@@ -142,10 +144,10 @@ Beyond features, devcontainers let you hook into the lifecycle at several points
 | initializeCommand |	In devcontainer.json ("initializeCommand": "./.devcontainer/init.sh" ) |	Executed before the Docker image is built. Useful for generating files that affect the build (e.g., writing a .npmrc). |
 | Feature install	| Declared under "features"; run automatically during image build after the base Containerfile steps.	| During container build – before the container starts. |
 | onCreateCommand | In devcontainer.json ("onCreateCommand": "./devcontainer/setup.sh" ) | This command is run inside a container immediately after it has started for the first time. |
-| updateContentCommand | In devcontaner.json ("updateContentCommand": "./devcontainer/update.sh" ) | This command runs after **onCreateCommand** It executes inside the comtainer whenever new content is available in the source tree during the creation process, but will execute at least once. |
+| updateContentCommand | In devcontainer.json ("updateContentCommand": "./devcontainer/update.sh" ) | This command runs after **onCreateCommand** It executes inside the container whenever new content is available in the source tree during the creation process, but will execute at least once. |
 | postCreateCommand (setup.sh) |	In devcontainer.json ("postCreateCommand": "./.devcontainer/setup.sh" )	| Runs inside the running container after it has started and been assigned to a user for the first time, but before VS Code attaches. Ideal for installing npm packages, creating virtual environments, or seeding a database. |
 | postStartCommand	 | In devcontainer.json ("postStartCommand": "npm start")	| Executed each time the container is re‑started (e.g., after you stop and reopen). Good for launching long‑running processes like a local server or watch task. |
-| postAttachCommand | In devcontainer.json ("postAttachCommand": "./.devcontainer/attach.sh" ) | Runs each time a tool has successfully arrached to the container |  
+| postAttachCommand | In devcontainer.json ("postAttachCommand": "./.devcontainer/attach.sh" ) | Runs each time a tool has successfully attached to the container |  
 | VS Code extensions	| "extensions": ["ms-python.python", "dbaeumer.vscode-eslint"] in devcontainer.json	| VS Code installs the listed extensions automatically when it connects to the container. |
 
 Example: Adding a custom script
@@ -231,7 +233,7 @@ Putting everything together, here’s a step‑by‑step guide to adopt devconta
     - Start the container and execute postCreateCommand.
     - Attach the editor, installing listed extensions automatically.
 
-6. Start coding! Your terminal (`Ctrl+``) is already inside the container, your ports are forwarded, and you can run debuggers as if they were local.
+6. Start coding! Your terminal (`Ctrl+``) is already inside the container, your project files are mounted at /workspace/<projectfolder> within the container, your ports are forwarded, and you can run debuggers as if they were local.
 
 ## Using Devcontainers on GitHub Codespaces
 
@@ -246,7 +248,8 @@ No extra configuration is required—this is one of the biggest advantages of ke
 
 While devcontainers are great for reproducibility, building them from scratch each time can feel slow, especially in CI pipelines or when onboarding many developers. Two strategies help you keep the experience snappy:
 
-### The devcontainer CLI
+### The devcontainer CLI - Command Line Interface
+
 Microsoft ships a [Dev Container CLI (devcontainer)](https://github.com/devcontainers/cli) that mirrors the VS Code UI workflow but runs entirely in your terminal. Typical commands:
 
 ```bash
@@ -266,54 +269,59 @@ If your devcontainer has heavy system dependencies (e.g., large language runtime
 
 1. Create a dedicated Containerfile that includes all features you always need.
 
-```
-# .devcontainer/Containerfile.prebuilt
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.04
+    ```
+    # .devcontainer/Containerfile.prebuilt
+    FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.04
 
-# Install Node, Python, and common tools in one layer
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y curl git build-essential \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs python3-pip
+    # Install Node, Python, and common tools in one layer
+    RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+        && apt-get install -y curl git build-essential \
+        && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+        && apt-get install -y nodejs python3-pip
 
-# Optional: install VS Code extensions globally (they’ll be available for any container based on this image)
-RUN code --install-extension ms-python.python \
-    && code --install-extension dbaeumer.vscode-eslint
-```
+    # Optional: install VS Code extensions globally (they’ll be available for any container based on this image)
+    RUN code --install-extension ms-python.python \
+        && code --install-extension dbaeumer.vscode-eslint
+    ```
 
 2. Build and push the image:
 
-```bash
-podman build -t quay.io/your-org/my-devcontainer:latest -f .devcontainer/Containerfile.prebuilt .
-podman push quay.io/your-org/my-devcontainer:latest
-```
+    ```bash
+    podman build -t quay.io/your-org/my-devcontainer:latest -f .devcontainer/Containerfile.prebuilt .
+    podman push quay.io/your-org/my-devcontainer:latest
+    ```
+
+    !!!Note
+        If your devcontainer definition contains features, you can use the devcontainer CLI to build the image from the devcontainer.json definition.  Using `devcontainer build` rather than `podman build` will include all the features within the build image.  This can further reduce the work needed to be done when the devcontainer starts.
+
+        Running `devcontainer build --help` shows all the possible command line options available,
 
 3. Reference the pre‑built image in devcontainer.json:
 
-```JSON
-{
-  "name": "Pre‑built Dev Container",
-  "image": "quay.io/your-org/my-devcontainer:latest",
-  "features": {},
-  "extensions": [],
-  "postCreateCommand": "./.devcontainer/setup.sh"
-}
-```
+    ```JSON
+    {
+      "name": "Pre‑built Dev Container",
+      "image": "quay.io/your-org/my-devcontainer:latest",
+      "features": {},
+      "extensions": [],
+      "postCreateCommand": "./.devcontainer/setup.sh"
+    }
+    ```
 
-Now, when a developer opens the repo, VS Code only needs to pull the image (seconds) instead of rebuilding it layer‑by‑layer. The same image can be used in CI:
+    Now, when a developer opens the repo, VS Code only needs to pull the image (seconds) instead of rebuilding it layer‑by‑layer. The same image can be used in CI:
 
-```YAML
-# .github/workflows/ci.yml
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/your-org/my-devcontainer:latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run tests
-        run: npm test   # or pytest, etc.
-```
+    ```YAML
+    # .github/workflows/ci.yml
+    jobs:
+      test:
+        runs-on: ubuntu-latest
+        container:
+          image: quay.io/your-org/my-devcontainer:latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Run tests
+            run: npm test   # or pytest, etc.
+    ```
 
 ## Bonus tip: Multi‑stage Containerfiles for faster builds
 If you need to compile something (e.g., native Node addons), split the build into two stages:

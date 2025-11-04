@@ -9,7 +9,21 @@
     }],
     "ignorePaths": [],
     "words": [
-       "mkdocs"
+       "mkdocs",
+       "devcontainer",
+       "Devcontainer",
+       "devcontainers",
+       "Devcontainers",
+       "Containerfile",
+       "Containerfiles",
+       "containerfile",
+       "Codespaces",
+       "codespace",
+       "runtimes",
+       "Skopeo",
+       "npmrc",
+       "dbaeumer",
+       "projectfolder"
     ],
     "flagWords": [
         "hte"
