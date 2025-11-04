@@ -1,6 +1,6 @@
 ---
 date:
-  created: 2025-10-28
+  created: 2025-11-04
 categories:
   - devcontainers
   - application development
