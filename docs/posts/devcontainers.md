@@ -22,7 +22,7 @@ The definition lives in a small JSON/YAML file (devcontainer.json) together with
 - Devcontainers = declarative Container‑based dev environments that work locally (VS Code Remote – Containers) and in the cloud (Codespaces, Gitpod).
 - Choose a source: pre‑built image, custom Containerfile, or docker‑compose stack.
 - Enrich your environment with features, which are reusable install scripts; be mindful of OS‑specific quirks.
-- Hook into the lifecycle via preCreateCommand, postCreateCommand, and onStartCommand. Install VS Code extensions declaratively or via script.
+- Hook into the lifecycle via configurable commands which run at defined points in the creation and setup process. Install VS Code extensions declaratively or via script.
 - Adopt them in a project by adding a .devcontainer/ folder, opening the repo in VS Code, and letting the tooling do the rest.
 - Speed matters: use the Dev Container CLI for CI, and consider pre‑building and publishing a custom image to avoid repeated builds.
 
