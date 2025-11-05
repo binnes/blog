@@ -4,15 +4,6 @@
         "dockerfile": "Containerfile"
   },
 
-	// 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
-	//"features": {
-	//	"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-	//	"ghcr.io/prulloac/devcontainer-features/bun:1": {},
-	//	"ghcr.io/devcontainers/features/node:1": {},
-	//	"ghcr.io/devcontainers/features/python:1": {},
-	//	"ghcr.io/devcontainers-contrib/features/poetry:2": {}
-	//},
-
 	"customizations":{
 		"vscode": {
 			"extensions": [
