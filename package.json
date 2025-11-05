@@ -1,5 +1,5 @@
 {
-    "name": "okd-io",
+    "name": "blog",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -15,7 +15,7 @@
     },
     "keywords": [],
     "author": "Brian Innes",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "devDependencies": {
         "cspell": "^5.20.0"
     }
