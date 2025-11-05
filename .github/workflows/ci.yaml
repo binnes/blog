@@ -26,7 +26,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install javascript dependencies
         run: npm ci
 
       - name: Run build script
