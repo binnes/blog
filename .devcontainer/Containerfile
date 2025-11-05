@@ -1,9 +1,9 @@
 FROM alpine:latest
 
-RUN adduser -D -u 1001 vscode
 RUN apk upgrade && \
     apk add \
-    python3 py3-pip nodejs npm git cairo cairo-tools pngquant \
+    python3 py3-pip nodejs npm git cairo cairo-tools pngquant bash shadow \
     cairo-dev jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev && \
     apk cache purge
+RUN adduser -D -u 1001 vscode && chsh -s /bin/bash vscode
 ENV PATH=/home/vscode/.local/bin:${PATH}
