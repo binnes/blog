@@ -1,8 +1,0 @@
-[filtering]
-checkextern=1
-ignore=
-  localhost:8000$
-  
-[checking]
-robotstxt=0
-localwebroot=./
