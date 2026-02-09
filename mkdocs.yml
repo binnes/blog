@@ -2,7 +2,7 @@ site_name: Brian Innes - Personal Blog
 site_author: Brian Innes
 site_url: https://binnes.github.io/blog/
 repo_url: https://github.com/binnes/blog
-copyright: Copyright &copy; 2025 Brian Innes
+copyright: Copyright &copy; 2025-2026 Brian Innes
 
 theme:
   name: material
@@ -36,6 +36,7 @@ theme:
     - navigation.footer
     - navigation.tabs
     - content.code.annotate
+    - content.tabs.link
 plugins:
   - search
   - blog:
@@ -80,3 +81,8 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
